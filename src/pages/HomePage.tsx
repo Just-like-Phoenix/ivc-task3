@@ -1,10 +1,11 @@
+import { HomePageDiv } from "../components/HomePage/StyledComponents";
 import TableComponent from "../components/Table/TableComponent";
 
 const HomePage = () => {
   return (
-    <div>
-      <TableComponent></TableComponent>
-    </div>
+    <HomePageDiv>
+      <TableComponent />
+    </HomePageDiv>
   );
 };
 

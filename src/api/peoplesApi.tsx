@@ -6,7 +6,7 @@ export const peoplesApi = createApi({
   reducerPath: "peoplesApi",
   baseQuery: fetchBaseQuery({ baseUrl: "https://softwium.com/api/" }),
   endpoints: (builder) => ({
-    getPeoples: builder.query<Peoples, void>({
+    getPeoples: builder.query<Peoples[], void>({
       query: () => `peoples`,
     }),
   }),

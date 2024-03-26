@@ -1,5 +1,10 @@
 import { styled } from "styled-components";
-import { blockColor, buttonColor, textColor } from "../../app/theme";
+import {
+  blockColor,
+  buttonColor,
+  selectedColor,
+  textColor,
+} from "../../app/theme";
 
 export const TablePaginationDiv = styled.div`
   width: 100%;
@@ -16,18 +21,25 @@ export const Table = styled.table`
   border-collapse: collapse;
 `;
 
-export const Th = styled.th`
-  font-size: 1.2vw;
-  border: 0.1vw solid ${textColor};
+export const Tr = styled.tr<{ $rowSelected: boolean }>`
+  border-bottom: 0.1vw solid
+    ${(props) => (props.$rowSelected ? selectedColor : textColor)};
+  font-size: 1.5vw;
+`;
+
+export const Th = styled.th<{ $colCount?: number }>`
+  border-bottom: 0.1vw solid ${textColor};
+  width: calc(100% / ${(props) => props.$colCount});
+  text-align: center;
 `;
 
 export const Td = styled.td`
-  font-size: 1vw;
-  border: 0.1vw solid ${textColor};
+  vertical-align: middle;
+  text-align: center;
 `;
 export const Button = styled.button`
   margin: auto;
-  height: 3vh;
+  height: 1.8vw;
   background-color: ${buttonColor};
   color: ${textColor};
   border-width: 0.1vw;
@@ -39,7 +51,7 @@ export const Button = styled.button`
 `;
 
 export const Select = styled.select`
-  height: 3vh;
+  height: 1.8vw;
   background-color: ${buttonColor};
   color: ${textColor};
   border-width: 0.1vw;
@@ -51,7 +63,6 @@ export const Select = styled.select`
 `;
 
 export const PageText = styled.h1`
-  position: relative;
   color: ${textColor};
   font-size: 1.5vw;
 `;

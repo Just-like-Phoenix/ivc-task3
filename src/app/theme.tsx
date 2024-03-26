@@ -10,6 +10,11 @@ export const backgroundColor = theme("mode", {
   dark: "#030303",
 });
 
+export const selectedColor = theme("mode", {
+  light: "#0f60b6",
+  dark: "#2f78c5",
+});
+
 export const textColor = theme("mode", {
   light: "#1c1c1c",
   dark: "#d7dadc",

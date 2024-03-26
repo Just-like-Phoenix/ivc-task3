@@ -4,7 +4,6 @@ import { useThemeChecker } from "../hoks/useThemeChecker";
 import { Route, Routes } from "react-router-dom";
 import HomePage from "../pages/HomePage";
 import NotFoundPage from "../pages/NotFoundPage";
-import { useGetPeoplesQuery } from "../api/peoplesApi";
 
 const GlobalStyle = createGlobalStyle`
   body {    
@@ -16,8 +15,6 @@ const GlobalStyle = createGlobalStyle`
 `;
 
 const App = () => {
-  useGetPeoplesQuery();
-
   return (
     <ThemeProvider theme={{ mode: useThemeChecker() }}>
       <GlobalStyle />

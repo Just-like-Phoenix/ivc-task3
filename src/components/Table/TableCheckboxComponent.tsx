@@ -15,6 +15,7 @@ function TableCheckbox({
 
   return (
     <input
+      style={{ width: 16, height: 16 }}
       type="checkbox"
       ref={ref}
       className={className + " cursor-pointer"}
