@@ -1,4 +1,5 @@
 import {
+  SortingState,
   flexRender,
   getCoreRowModel,
   getExpandedRowModel,
@@ -14,11 +15,15 @@ import { ColumnDef } from "../../features/Table/ColumnDef";
 import { Loader } from "../Loader/LoaderComponent";
 import { useAppDispatch, useAppSelector } from "../../hoks/storeHoks";
 import { setSelectedTableData } from "../../slices/selectedTableDataSlice";
+import { SortIcon } from "../icons/Sort";
+import { SelectIcon } from "../icons/Select";
+import { UnselectIcon } from "../icons/Unselect";
 
 const TableComponent = () => {
   const [tData, setTData] = React.useState<Peoples[]>([]);
   const [defColumns, setDefColumns] = React.useState<any[]>([]);
   const [rowSelection, setRowSelection] = React.useState({});
+  const [sorting, setSorting] = React.useState<SortingState>([]);
   const dispatch = useAppDispatch();
   const { data, isLoading } = useGetPeoplesQuery();
 
@@ -27,9 +32,10 @@ const TableComponent = () => {
     columns: defColumns,
     state: {
       rowSelection,
+      sorting,
     },
     onRowSelectionChange: setRowSelection,
-    getExpandedRowModel: getExpandedRowModel(),
+    onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
   });
@@ -47,51 +53,67 @@ const TableComponent = () => {
 
   useEffect(() => {
     table.setPageSize(5);
-  }, [table]);
+  }, []);
+
+  useEffect(() => {
+    console.log(table.getSortedRowModel());
+  }, [sorting]);
 
   if (isLoading) return <Loader />;
   else
     return (
       <TableDiv>
         <Table>
-          <thead>
+          <thead style={{ textAlign: "unset" }}>
             {table.getHeaderGroups().map((headerGroup) => (
-              <Tr key={headerGroup.id} $rowSelected={false}>
+              <Tr
+                key={headerGroup.id}
+                $rowSelected={table.getIsAllRowsSelected()}
+              >
+                {table.getIsAllRowsSelected() ? (
+                  <UnselectIcon
+                    onClick={(e) => table.toggleAllRowsSelected()}
+                  />
+                ) : (
+                  <SelectIcon onClick={(e) => table.toggleAllRowsSelected()} />
+                )}
                 {headerGroup.headers.map((header) => {
-                  if (header.id === "selectCheckBox")
-                    return (
-                      <Th
-                        key={header.id}
-                        colSpan={header.colSpan}
-                        style={{ width: "5%" }}
-                      >
-                        {header.isPlaceholder ? null : (
-                          <div>
-                            {flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            )}
-                          </div>
-                        )}
-                      </Th>
-                    );
-                  else
-                    return (
-                      <Th
-                        key={header.id}
-                        colSpan={header.colSpan}
-                        $colCount={headerGroup.headers.length - 1}
-                      >
-                        {header.isPlaceholder ? null : (
-                          <div>
-                            {flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            )}
-                          </div>
-                        )}
-                      </Th>
-                    );
+                  return (
+                    <Th
+                      key={header.id}
+                      colSpan={header.colSpan}
+                      $colCount={headerGroup.headers.length}
+                    >
+                      {header.isPlaceholder ? null : (
+                        <div
+                          className={
+                            header.column.getCanSort()
+                              ? "cursor-pointer select-none"
+                              : ""
+                          }
+                          onClick={header.column.getToggleSortingHandler()}
+                          title={
+                            header.column.getCanSort()
+                              ? header.column.getNextSortingOrder() === "asc"
+                                ? "Sort ascending"
+                                : header.column.getNextSortingOrder() === "desc"
+                                ? "Sort descending"
+                                : "Clear sort"
+                              : undefined
+                          }
+                        >
+                          {flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                          {{
+                            asc: " 🔼",
+                            desc: " 🔽",
+                          }[header.column.getIsSorted() as string] ?? null}
+                        </div>
+                      )}
+                    </Th>
+                  );
                 })}
               </Tr>
             ))}
@@ -106,6 +128,7 @@ const TableComponent = () => {
                   }}
                   $rowSelected={row.getIsSelected()}
                 >
+                  <Td />
                   {row.getVisibleCells().map((cell) => {
                     return (
                       <Td key={cell.id}>
@@ -122,6 +145,7 @@ const TableComponent = () => {
           </tbody>
         </Table>
         <TablePaginationComponent table={table} />
+        <pre>{JSON.stringify(sorting, null, 2)}</pre>
       </TableDiv>
     );
 };

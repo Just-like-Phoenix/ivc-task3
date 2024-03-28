@@ -2,6 +2,7 @@ import { styled } from "styled-components";
 import {
   blockColor,
   buttonColor,
+  hoverColor,
   selectedColor,
   textColor,
 } from "../../app/theme";
@@ -19,6 +20,9 @@ export const Table = styled.table`
   height: 90%;
   color: ${textColor};
   border-collapse: collapse;
+  && tbody > tr:hover > td {
+    background: ${hoverColor};
+  }
 `;
 
 export const Tr = styled.tr<{ $rowSelected: boolean }>`
@@ -28,8 +32,7 @@ export const Tr = styled.tr<{ $rowSelected: boolean }>`
 `;
 
 export const Th = styled.th<{ $colCount?: number }>`
-  border-bottom: 0.1vw solid ${textColor};
-  width: calc(100% / ${(props) => props.$colCount});
+  width: calc((100%) / ${(props) => props.$colCount});
   text-align: center;
 `;
 
