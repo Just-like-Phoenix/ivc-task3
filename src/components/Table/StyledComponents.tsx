@@ -1,5 +1,6 @@
 import { styled } from "styled-components";
 import {
+  backgroundColor,
   blockColor,
   buttonColor,
   hoverColor,
@@ -26,8 +27,9 @@ export const Table = styled.table`
 `;
 
 export const Tr = styled.tr<{ $rowSelected: boolean }>`
-  border-bottom: 0.1vw solid
-    ${(props) => (props.$rowSelected ? selectedColor : textColor)};
+  border-bottom: 0.1vw solid ${textColor};
+  background-color: ${(props) =>
+    props.$rowSelected ? selectedColor : blockColor};
   font-size: 1.5vw;
 `;
 

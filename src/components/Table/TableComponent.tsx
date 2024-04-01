@@ -4,6 +4,7 @@ import {
   getCoreRowModel,
   getExpandedRowModel,
   getPaginationRowModel,
+  getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
 import React, { useEffect } from "react";
@@ -11,17 +12,18 @@ import { Table, TableDiv, Td, Th, Tr } from "./StyledComponents";
 import TablePaginationComponent from "./TablePaginationComponent";
 import { useGetPeoplesQuery } from "../../api/peoplesApi";
 import { Peoples } from "../../types/Peoples";
-import { ColumnDef } from "../../features/Table/ColumnDef";
 import { Loader } from "../Loader/LoaderComponent";
 import { useAppDispatch, useAppSelector } from "../../hoks/storeHoks";
 import { setSelectedTableData } from "../../slices/selectedTableDataSlice";
 import { SortIcon } from "../icons/Sort";
 import { SelectIcon } from "../icons/Select";
 import { UnselectIcon } from "../icons/Unselect";
+import { useCreateColumns } from "../../hoks/useCreateColumns";
+import { ArrowUpIcon } from "../icons/ArrowUp";
+import { ArrowDownIcon } from "../icons/ArrowDown";
 
 const TableComponent = () => {
   const [tData, setTData] = React.useState<Peoples[]>([]);
-  const [defColumns, setDefColumns] = React.useState<any[]>([]);
   const [rowSelection, setRowSelection] = React.useState({});
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const dispatch = useAppDispatch();
@@ -29,7 +31,7 @@ const TableComponent = () => {
 
   const table = useReactTable({
     data: tData,
-    columns: defColumns,
+    columns: useCreateColumns(),
     state: {
       rowSelection,
       sorting,
@@ -37,13 +39,13 @@ const TableComponent = () => {
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
   });
 
   useEffect(() => {
     if (data !== undefined) {
       setTData(data);
-      setDefColumns(ColumnDef(data, Object.keys(data[0])));
     }
   }, [data]);
 
@@ -53,11 +55,7 @@ const TableComponent = () => {
 
   useEffect(() => {
     table.setPageSize(5);
-  }, []);
-
-  useEffect(() => {
-    console.log(table.getSortedRowModel());
-  }, [sorting]);
+  }, [table]);
 
   if (isLoading) return <Loader />;
   else
@@ -70,13 +68,6 @@ const TableComponent = () => {
                 key={headerGroup.id}
                 $rowSelected={table.getIsAllRowsSelected()}
               >
-                {table.getIsAllRowsSelected() ? (
-                  <UnselectIcon
-                    onClick={(e) => table.toggleAllRowsSelected()}
-                  />
-                ) : (
-                  <SelectIcon onClick={(e) => table.toggleAllRowsSelected()} />
-                )}
                 {headerGroup.headers.map((header) => {
                   return (
                     <Th
@@ -86,29 +77,20 @@ const TableComponent = () => {
                     >
                       {header.isPlaceholder ? null : (
                         <div
-                          className={
-                            header.column.getCanSort()
-                              ? "cursor-pointer select-none"
-                              : ""
-                          }
-                          onClick={header.column.getToggleSortingHandler()}
-                          title={
-                            header.column.getCanSort()
-                              ? header.column.getNextSortingOrder() === "asc"
-                                ? "Sort ascending"
-                                : header.column.getNextSortingOrder() === "desc"
-                                ? "Sort descending"
-                                : "Clear sort"
-                              : undefined
-                          }
+                          {...{
+                            className: header.column.getCanSort()
+                              ? "select-none cursor-pointer flex items-center gap-1"
+                              : "",
+                            onClick: header.column.getToggleSortingHandler(),
+                          }}
                         >
                           {flexRender(
                             header.column.columnDef.header,
                             header.getContext()
                           )}
                           {{
-                            asc: " 🔼",
-                            desc: " 🔽",
+                            asc: <ArrowUpIcon />,
+                            desc: <ArrowDownIcon />,
                           }[header.column.getIsSorted() as string] ?? null}
                         </div>
                       )}
@@ -128,7 +110,6 @@ const TableComponent = () => {
                   }}
                   $rowSelected={row.getIsSelected()}
                 >
-                  <Td />
                   {row.getVisibleCells().map((cell) => {
                     return (
                       <Td key={cell.id}>
@@ -145,7 +126,6 @@ const TableComponent = () => {
           </tbody>
         </Table>
         <TablePaginationComponent table={table} />
-        <pre>{JSON.stringify(sorting, null, 2)}</pre>
       </TableDiv>
     );
 };

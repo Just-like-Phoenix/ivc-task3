@@ -1,6 +1,8 @@
-import { createColumnHelper } from "@tanstack/react-table";
+import { ColumnDef, createColumnHelper } from "@tanstack/react-table";
+import { useMemo } from "react";
+import { Peoples } from "../../types/Peoples";
 
-export function ColumnDef(data: any[], keys: string[]) {
+export function createColumnDef(data: any[], keys: string[]) {
   let defColumns: any[] = [];
 
   type columnsType = typeof data;
