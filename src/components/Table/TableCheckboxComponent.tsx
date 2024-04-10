@@ -19,6 +19,7 @@ function TableCheckbox({
       ref={ref}
       className={className + " cursor-pointer"}
       {...rest}
+      style={{ width: 24, height: 24 }}
     />
   );
 }

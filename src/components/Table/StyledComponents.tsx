@@ -8,12 +8,18 @@ import {
   textColor,
 } from "../../app/theme";
 
-export const TablePaginationDiv = styled.div`
-  width: 100%;
-  height: 10%;
+export const TableDiv = styled.div`
+  background-color: ${blockColor};
+
   display: flex;
+  flex-direction: column;
   justify-content: space-between;
   align-items: center;
+
+  width: 80%;
+  height: 80%;
+  padding: 20px;
+  border-radius: 40px;
 `;
 
 export const Table = styled.table`
@@ -30,7 +36,7 @@ export const Tr = styled.tr<{ $rowSelected: boolean }>`
   border-bottom: 0.1vw solid ${textColor};
   background-color: ${(props) =>
     props.$rowSelected ? selectedColor : blockColor};
-  font-size: 1.5vw;
+  font-size: 16px;
 `;
 
 export const Th = styled.th<{ $colCount?: number }>`
@@ -42,13 +48,23 @@ export const Td = styled.td`
   vertical-align: middle;
   text-align: center;
 `;
-export const Button = styled.button`
+
+export const TablePaginationDiv = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+export const PaginationButton = styled.button`
   margin: auto;
-  height: 1.8vw;
+  height: 48px;
+  width: 48px;
   background-color: ${buttonColor};
   color: ${textColor};
-  border-width: 0.1vw;
-  font-size: 1.2vw;
+  border-width: 1px;
+  border-radius: 100%;
+  font-size: 24px;
 
   display: flex;
   justify-content: center;
@@ -56,11 +72,12 @@ export const Button = styled.button`
 `;
 
 export const Select = styled.select`
-  height: 1.8vw;
+  height: 48px;
   background-color: ${buttonColor};
   color: ${textColor};
-  border-width: 0.1vw;
-  font-size: 1.2vw;
+  border-width: 1px;
+  border-radius: 20px;
+  font-size: 24px;
 
   display: flex;
   justify-content: center;
@@ -69,14 +86,5 @@ export const Select = styled.select`
 
 export const PageText = styled.h1`
   color: ${textColor};
-  font-size: 1.5vw;
-`;
-
-export const TableDiv = styled.div`
-  background-color: ${blockColor};
-
-  width: 80vw;
-  height: 80svh;
-  padding: 20px 20px 0px 20px;
-  border-radius: 20px;
+  font-size: 32px;
 `;

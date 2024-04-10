@@ -2,7 +2,7 @@ import {
   SortingState,
   flexRender,
   getCoreRowModel,
-  getExpandedRowModel,
+  getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
@@ -15,31 +15,34 @@ import { Peoples } from "../../types/Peoples";
 import { Loader } from "../Loader/LoaderComponent";
 import { useAppDispatch, useAppSelector } from "../../hoks/storeHoks";
 import { setSelectedTableData } from "../../slices/selectedTableDataSlice";
-import { SortIcon } from "../icons/Sort";
-import { SelectIcon } from "../icons/Select";
-import { UnselectIcon } from "../icons/Unselect";
 import { useCreateColumns } from "../../hoks/useCreateColumns";
 import { ArrowUpIcon } from "../icons/ArrowUp";
 import { ArrowDownIcon } from "../icons/ArrowDown";
+import SearchComponent from "../Search/SearchComponent";
 
 const TableComponent = () => {
   const [tData, setTData] = React.useState<Peoples[]>([]);
   const [rowSelection, setRowSelection] = React.useState({});
   const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [globalFilter, setGlobalFilter] = React.useState("");
   const dispatch = useAppDispatch();
   const { data, isLoading } = useGetPeoplesQuery();
 
   const table = useReactTable({
     data: tData,
     columns: useCreateColumns(),
+    globalFilterFn: "includesString",
     state: {
       rowSelection,
       sorting,
+      globalFilter,
     },
     onRowSelectionChange: setRowSelection,
+    onGlobalFilterChange: setGlobalFilter,
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
   });
 
@@ -60,73 +63,79 @@ const TableComponent = () => {
   if (isLoading) return <Loader />;
   else
     return (
-      <TableDiv>
-        <Table>
-          <thead style={{ textAlign: "unset" }}>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <Tr
-                key={headerGroup.id}
-                $rowSelected={table.getIsAllRowsSelected()}
-              >
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <Th
-                      key={header.id}
-                      colSpan={header.colSpan}
-                      $colCount={headerGroup.headers.length}
-                    >
-                      {header.isPlaceholder ? null : (
-                        <div
-                          {...{
-                            className: header.column.getCanSort()
-                              ? "select-none cursor-pointer flex items-center gap-1"
-                              : "",
-                            onClick: header.column.getToggleSortingHandler(),
-                          }}
-                        >
-                          {flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                          {{
-                            asc: <ArrowUpIcon />,
-                            desc: <ArrowDownIcon />,
-                          }[header.column.getIsSorted() as string] ?? null}
-                        </div>
-                      )}
-                    </Th>
-                  );
-                })}
-              </Tr>
-            ))}
-          </thead>
-          <tbody>
-            {table.getRowModel().rows.map((row) => {
-              return (
+      <>
+        <SearchComponent
+          globalFilter={globalFilter}
+          setGlobalFilter={setGlobalFilter}
+        />
+        <TableDiv>
+          <Table>
+            <thead style={{ textAlign: "unset" }}>
+              {table.getHeaderGroups().map((headerGroup) => (
                 <Tr
-                  key={row.id}
-                  onClick={(e) => {
-                    row.toggleSelected();
-                  }}
-                  $rowSelected={row.getIsSelected()}
+                  key={headerGroup.id}
+                  $rowSelected={table.getIsAllRowsSelected()}
                 >
-                  {row.getVisibleCells().map((cell) => {
+                  {headerGroup.headers.map((header) => {
                     return (
-                      <Td key={cell.id}>
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
+                      <Th
+                        key={header.id}
+                        colSpan={header.colSpan}
+                        $colCount={headerGroup.headers.length}
+                      >
+                        {header.isPlaceholder ? null : (
+                          <div
+                            {...{
+                              className: header.column.getCanSort()
+                                ? "select-none cursor-pointer flex items-center gap-1"
+                                : "",
+                              onClick: header.column.getToggleSortingHandler(),
+                            }}
+                          >
+                            {flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
+                            {{
+                              asc: <ArrowUpIcon />,
+                              desc: <ArrowDownIcon />,
+                            }[header.column.getIsSorted() as string] ?? null}
+                          </div>
                         )}
-                      </Td>
+                      </Th>
                     );
                   })}
                 </Tr>
-              );
-            })}
-          </tbody>
-        </Table>
-        <TablePaginationComponent table={table} />
-      </TableDiv>
+              ))}
+            </thead>
+            <tbody>
+              {table.getRowModel().rows.map((row) => {
+                return (
+                  <Tr
+                    key={row.id}
+                    onClick={(e) => {
+                      row.toggleSelected();
+                    }}
+                    $rowSelected={row.getIsSelected()}
+                  >
+                    {row.getVisibleCells().map((cell) => {
+                      return (
+                        <Td key={cell.id}>
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
+                        </Td>
+                      );
+                    })}
+                  </Tr>
+                );
+              })}
+            </tbody>
+          </Table>
+          <TablePaginationComponent table={table} />
+        </TableDiv>
+      </>
     );
 };
 

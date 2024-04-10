@@ -1,5 +1,6 @@
 import ApplyEx from "../components/ApplyEx/ApplyEx";
 import { HomePageDiv } from "../components/HomePage/StyledComponents";
+import SearchComponent from "../components/Search/SearchComponent";
 import TableComponent from "../components/Table/TableComponent";
 
 const HomePage = () => {

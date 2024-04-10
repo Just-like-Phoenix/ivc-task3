@@ -1,6 +1,6 @@
 import { Table } from "@tanstack/react-table";
 import {
-  Button,
+  PaginationButton,
   PageText,
   Select,
   TablePaginationDiv,
@@ -17,33 +17,33 @@ const TablePaginationComponent = ({ table }: { table: Table<any> }) => {
           alignItems: "center",
         }}
       >
-        <Button
+        <PaginationButton
           onClick={() => table.setPageIndex(0)}
           disabled={!table.getCanPreviousPage()}
         >
           {"<<"}
-        </Button>
+        </PaginationButton>
 
-        <Button
+        <PaginationButton
           onClick={() => table.previousPage()}
           disabled={!table.getCanPreviousPage()}
         >
           {"<"}
-        </Button>
+        </PaginationButton>
 
-        <Button
+        <PaginationButton
           onClick={() => table.nextPage()}
           disabled={!table.getCanNextPage()}
         >
           {">"}
-        </Button>
+        </PaginationButton>
 
-        <Button
+        <PaginationButton
           onClick={() => table.setPageIndex(table.getPageCount() - 1)}
           disabled={!table.getCanNextPage()}
         >
           {">>"}
-        </Button>
+        </PaginationButton>
       </div>
       <PageText>
         Page {table.getState().pagination.pageIndex + 1} of{" "}
